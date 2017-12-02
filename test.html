@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>ECharts</title>
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/iconfont.css" />
+</head>
+<body>
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+<div class="main_box">
+    <div id="echart" class="echart"></div>
+    <div class="main_content">
+        <div id="selectCity">当前选择的省份是：<span class="city">广东</span></div>
+        <div id="resBox" class="resBox scrollbar">
+            <ul class="info_box"></ul>
+        </div>
+        <div id="c_resBox" class="resBox" style="display: none;">
+            <ul class="info_box"></ul>
+        </div>
+    </div>
+</div>
+<div class="mask_tpl" style="display: none;">
+    <div class="mask"></div>
+    <div class="light_box">
+        <div class="m_header">
+            <div class="m_title"></div>
+            <a class="close_mask" onclick="back()" href="javascript:;"></a>
+        </div>
+        <div class="m_content">
+            <div id="baiduMap" class="baiduMap"></div>
+        </div>
+        <div class="m_item_list">
+            <div class="m_store_head">
+                <i class="m_home iconfont icon-home"></i>
+                <span class="m_store_title">网点列表</span>
+                <i class="m_down iconfont icon-downward"></i>
+            </div>
+            <div class="m_store_info scrollbar">
+                <ul class="res_item_list" id="res_item_list"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/require.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=yourkey"></script>
+<!-- ECharts单文件引入 -->
+
+<!-- 引入 echarts.js -->
+<!-- echarts3.x version -->
+<!-- <script src="https://cdn.bootcss.com/echarts/3.8.3/echarts.min.js"></script> -->
+<!-- <script src="echarts.min.js"></script>
+<script src="http://echarts.baidu.com/asset/map/js/china.js"></script> -->
+
+<!-- echarts2.x  version -->
+<script src="js/echarts-all.js"></script>
+
+<script type="text/javascript">
+    function back(){
+        $(".mask_tpl").css({"display":"none"});
+    }
+    function getMap(dom,type){
+        setMask();
+        storeControl();
+        var map_name,map_phone,map_addr,map_pro;
+        if(type == "resStore"){
+            var parentDom = $(dom).parent(".r_info_box");
+            var addrDom = $(parentDom).find(".r_addr");
+            var phoneDom = $(parentDom).find(".r_phone");
+            map_name = $(parentDom).find(".r_title").text();
+            map_phone = $(phoneDom).find(".r_val").text();
+            map_addr = $(addrDom).find(".r_val").text();
+            map_pro = $(dom).data("pro");
+            var resId = $(dom).data("id");
+        }else if(type == "resMap"){
+            map_name = $(dom).find(".r_title").text();
+            map_phone = $(dom).find(".r_phone").data("phone");
+            map_addr = $(dom).data("stoaddr");
+            map_pro = $(dom).data("stopro");
+            var resId = $(dom).data("id");
+        }
+
+        var itemDom = $(".mask_tpl .light_box .m_item_list .m_store_info .res_item");
+        $.each(itemDom,function(){
+            var itemId = $(this).data("id");
+            if(resId == itemId){
+                $(this).addClass("item_selected").siblings().removeClass("item_selected");
+            }
+        });
+
+
+        $(".mask_tpl .light_box .m_title").html(map_name);
+
+        var map = new BMap.Map("baiduMap");		/* 创建map实例 */
+        var point = new BMap.Point(113.381958,23.10755);
+        map.centerAndZoom(point,17);
+        map.clearOverlays();
+        var myGeo = new BMap.Geocoder(); // 创建地址解析器实例
+        // 将地址解析结果显示在地图上，并调整地图视野
+        myGeo.getPoint(map_addr,function (point) {
+            if (point) {
+                map.centerAndZoom(point, 17);
+                var newMaker = new BMap.Marker(point);
+                map.addOverlay(newMaker);
+                var pointSize = {
+                    width : 200     /* 信息窗口宽度*/
+                }
+                var mapInfo = map_name+"<br>地址："+map_addr;
+                if(map_phone){
+                    mapInfo = map_name+"<br>地址："+map_addr+"<br>电话："+map_phone;
+                }
+                if( mapInfo ){
+                    var infoWindow = new BMap.InfoWindow( mapInfo,pointSize);/*BMap.InfoWindow创建一个信息窗对象*/
+                    newMaker.openInfoWindow( infoWindow );  /* 打开信息窗口*/
+                }
+                newMaker.addEventListener("click", function(){
+                    var infoWindow = new BMap.InfoWindow( mapInfo,pointSize);/*BMap.InfoWindow创建一个信息窗对象*/
+                    newMaker.openInfoWindow( infoWindow );  /* 打开信息窗口*/
+                });
+            } else {
+                alert("搜索不到结果");
+            }
+        }, map_pro);
+
+
+        var bMapNavigation = new BMap.NavigationControl();  /*创建地图平移缩放控件*/
+        map.addControl( bMapNavigation );				/* 添加一条鱼骨*/
+        var bMapScale = new BMap.ScaleControl();  /*创建地图比例尺控件*/
+        map.addControl( bMapScale );		  /* 添加比例尺*/
+        map.enableScrollWheelZoom();   // 启动鼠标滚轮操作
+        map.enableContinuousZoom();    // 开启连续缩放效果
+        map.enableInertialDragging();　// 开启惯性拖拽效果
+        map.enableKeyboard();          // 开启键盘操作
+
+    }
+    function setMask(){
+        var srH = window.screen.height *0.61 +"px";
+        var srW = window.screen.width * 0.45 +"px";
+        $(".light_box").css({"width":srW,"height":srH,});
+
+        $(".mask_tpl").css({"display":"block"});
+        $("#res_item_list").html($("#c_resBox").find(".info_box").html());
+    }
+
+    function storeControl(){
+        $(".m_store_head").off("click").on("click",function(){
+            $(".m_store_head").toggleClass("hover");
+            $(".m_store_head .m_down").toggleClass("icon-upward");
+            $(".m_store_info").toggleClass("store_hide");
+        });
+    }
+
+    require(["js/data"],function(data){
+        function setEchartsMap(){
+            sreachRes(data,"广东");
+            // 基于准备好的dom，初始化echarts图表
+            var myChart = echarts.init(document.getElementById('echart'));
+            var option = {
+                tooltip : {
+                    trigger: 'item',
+                    formatter: '{b}'
+                },
+                series : [
+                    {
+                        name: '中国',
+                        type: 'map',
+                        mapType: 'china',
+                        selectedMode : 'single',
+                        itemStyle:{
+                            normal:{label:{show:true}},
+                            emphasis:{label:{show:true}}
+                        },
+                        data:[
+                            {name:'广东',selected:true}
+                        ]
+                    }
+                ]
+            };
+            myChart.on('click', function (params) {
+                var city = params.name;
+                $(".city").html(city);
+                sreachRes(data,city);
+            });
+            myChart.setOption(option);
+        }
+        setEchartsMap();
+
+        function sreachRes(data,sleWord){
+            var resFlag = false; var flag =false;
+            var html ='';
+            var reshtml = '';
+            if(data && data.length > 0){
+                $.each(data,function(i,item){
+                    var resData = item.info.data;
+                    var resTitle = item.pro;
+                    if(resTitle.indexOf(sleWord) > -1){
+                        flag = true;
+                        html +='<li class="res_item">' +
+                                    '<div class="r_info_box">' +
+                                        '<span class="r_title">'+resData.name+'</span>' +
+                                        '<div class="r_info r_addr">' +
+                                            '<span class="r_label">地址：</span>' +
+                                            '<span class="r_val">'+resData.addr+'</span>' +
+                                        '</div>' +
+                                        '<div class="r_info r_phone">' +
+                                            '<span class="r_label">电话：</span>' +
+                                            '<span class="r_val">'+resData.phone+'</span>' +
+                                        '</div>' +
+                                        '<div class="r_map" data-id="'+item.id+'" data-pro="'+item.pro+'" onclick="getMap(this,\'resStore\')">查看地图</div>' +
+                                    '</div>' +
+                                '</li>';
+
+                        reshtml+='<li class="res_item" data-id="'+item.id+'" data-stoaddr="'+resData.addr+'" data-stopro="'+item.pro+'" onclick="getMap(this,\'resMap\')">'+
+                                '<div class="res_content">' +
+                                '<span class="r_info r_title">'+resData.name+'</span>';
+                        if(resData.phone){
+                            reshtml+=  '<div class="r_info r_phone" data-phone="'+resData.phone+'">电话：'+resData.phone+'</div>';
+                        }
+                        reshtml+='</div></li>';
+
+                    }else{
+                        resFlag = true;
+                    }
+                });
+            }else{
+                resFlag = true;
+            }
+            if(resFlag && !flag){
+                html += '<div class="noResult">暂无搜索结果</div>';
+            }
+            $("#resBox").find(".info_box").html(html);
+            $("#c_resBox").find(".info_box").html(reshtml);
+            setItemWidth();
+        }
+
+        function setItemWidth(){
+            var seaW = $("#resBox").width();
+            var itemW = (seaW-80)/3+"px";
+            $("#resBox .info_box").find("li").css({"width":itemW});
+        }
+    });
+</script>
+</body>
+</html>

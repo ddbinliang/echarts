@@ -1,0 +1,50 @@
+*{margin: 0; padding: 0;}
+body { color: #555; font-size: 14px;}
+body, input, select, textarea { font-family: 'Arial', 'Microsoft YaHei', 'SimSun', '微软雅黑', '宋体';}
+ul,li{list-style: none;}
+.main_box{width: 100%;height: auto;margin-bottom: 20px;}
+.main_box .echart{height: 600px;width: 100%;}
+#selectCity{width: 1200px;height: auto;margin: 0 auto;line-height: 40px;font-size: 18px;}
+#selectCity .city{color: #FF0000;}
+.resBox{height: 326px;width: 1200px;margin: 0 auto;background-color: #ccc;}
+.resBox .info_box .res_item{min-height: 134px;width: 32%;float: left;overflow: hidden;margin-top: 10px;margin-left: 10px;background-color: #f5f5f5;padding: 10px;}
+.resBox .info_box .res_item:nth-child(3n-2){margin-left: 0;clear: both;}
+.resBox .r_info_box{font-size: 14px;width: 100%;}
+.resBox .res_item .r_info_box .r_title{display: block;padding-bottom: 6px;font-size: 16px;font-weight: bold;}
+.resBox .res_item .r_info_box .r_info{width: 100%;line-height: 22px;}
+.resBox .res_item .r_info_box .r_map{background: url(../images/map_icon.png) 0px 5px no-repeat;padding-left: 20px;padding-top: 2px;clear: both;cursor: pointer;}
+.r_info .r_label{display: block;width: 42px;float: left;}
+.r_info .r_val{display: inline-block;width: calc(100% - 42px);float: left;}
+/*mask_tpl*/
+.mask_tpl .mask{zoom: 1;background-color: #000;opacity: .8;width: 100%;height:100%;position: fixed;left: 0; top: 0;z-index: 99999;}
+.mask_tpl .light_box{min-width: 500px;min-height: 600px;background-color: #fff;position: fixed;top: 0; left: 0; bottom: 0; right: 0;margin: auto;z-index: 100000;}
+.mask_tpl .light_box .m_header{height: 44px;line-height: 44px; padding-left: 20px;cursor: move;}
+.mask_tpl .light_box .m_header .m_title{font-size: 18px;color: #333;}
+.mask_tpl .light_box .m_header .close_mask{height: 22px;width: 22px;background: url("../images/close_icon.png") -1px 1px no-repeat; position: absolute;top: 10px;right: 20px;}
+.mask_tpl .light_box .m_content{padding:0 20px 20px;position: relative;}
+.mask_tpl .light_box .m_content .baiduMap{height: 598px;border: 1px solid #e6e6e6;}
+.mask_tpl .light_box .m_item_list{position: absolute;z-index: 9;top: 55px;right: 30px;width: 234px;height: auto;}
+.mask_tpl .light_box .m_item_list .m_store_head{width: 100%;height:40px;background-color: #fff;line-height: 40px;}
+.mask_tpl .light_box .m_item_list .m_store_head .kenfor-icons-home{font-size: 30px;vertical-align: middle;}
+.mask_tpl .light_box .m_item_list .m_store_head .map_downward{font-size: 20px;vertical-align: middle;position: absolute;top: 11px;right: 10px;}
+.mask_tpl .light_box .m_item_list .m_store_head .m_store_title{display: inline-block;width: 150px;text-align: center;}
+.mask_tpl .light_box .m_item_list .hover{background-color: #cf000e;color: #fff;}
+.mask_tpl .light_box .m_item_list .m_store_head:hover{background-color: #cf000e;color: #fff;}
+.mask_tpl .light_box .m_item_list .store_hide{display: none;}
+.mask_tpl .light_box .m_store_info{overflow: auto; border: solid 1px #eaeaea;padding: 10px 15px;background: #fff;margin-top: 10px;box-shadow: 0px 2px 6px #c7c7c7;height: 328px;display: block;}
+.mask_tpl .light_box .m_store_info .res_item{padding: 10px 0 10px 10px;border-bottom: 1px solid #e9e9e9;line-height: 20px;cursor: pointer;height: auto;}
+.mask_tpl .light_box .m_store_info .res_item:hover{background-color: #f6f6f6;}
+.mask_tpl .light_box .m_store_info .res_item .r_title{font-weight: bold;}
+.mask_tpl .light_box .m_item_list .item_selected{color: #cf000e}
+.mask_tpl .ui-draggable-dragging{opacity: 1}
+.mask_tpl .light_box .m_item_list .m_home{ font-size: 34px;vertical-align: middle;padding-left: 10px;}
+.mask_tpl .light_box .m_item_list .m_down{ font-size: 20px;vertical-align: middle;}
+.main_box .main_content .scrollbar,
+.mask_tpl .light_box .m_item_list .scrollbar{overflow: auto;}
+.main_box .main_content .scrollbar::-webkit-scrollbar,
+.mask_tpl .light_box .m_item_list .scrollbar::-webkit-scrollbar{width: 5px;height: 5px;background-color: #f5f5f5;}
+.main_box .main_content .scrollbar::-webkit-scrollbar-track,
+.mask_tpl .light_box .m_item_list .scrollbar::-webkit-scrollbar-track{-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .2);border-radius: 10px;background-color: #FFF;}
+.main_box .main_content .scrollbar::-webkit-scrollbar-thumb,
+.mask_tpl .light_box .m_item_list .scrollbar::-webkit-scrollbar-thumb{height: 5px;border-radius: 5px;-webkit-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);background-color: #adb6bf;}
+.main_box .main_content .resBox .info_box .info_box .noResult{text-align: center;padding: 50px;font-size: 18px;}
